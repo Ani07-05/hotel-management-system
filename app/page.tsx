@@ -1,101 +1,106 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { motion, useAnimation } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
+import { Button } from '@/src/components/ui/button'
+import { useAuth } from '@/src/hooks/useAuth'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [mounted, setMounted] = useState(false)
+  const controls = useAnimation()
+  const { isAuthenticated, username, logout } = useAuth()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    setMounted(true)
+    controls.start(i => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.2 }
+    }))
+  }, [controls])
+
+  if (!mounted) return null
+
+  return (
+    <div className="flex flex-col min-h-screen bg-black text-white">
+      {/* Navbar */}
+      <nav className="w-full py-4 px-6 flex justify-between items-center border-b border-gray-800">
+        <Link href="/" className="text-2xl font-bold">HMS</Link>
+        <div className="space-x-4">
+          {isAuthenticated && (
+            <>
+              <Link href="/rooms" className="hover:text-gray-300">Rooms</Link>
+              <Link href="/guests" className="hover:text-gray-300">Guests</Link>
+            </>
+          )}
+          {isAuthenticated ? (
+            <>
+              <span className="text-gray-300">Welcome, {username}</span>
+              <Button onClick={logout} variant="ghost" className="hover:text-gray-300">Logout</Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="hover:text-gray-300">Login</Link>
+              <Link href="/signup" className="hover:text-gray-300">Sign Up</Link>
+            </>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="flex-grow flex items-center justify-center p-8">
+        <div className="max-w-6xl w-full relative">
+          {/* Elegant page border */}
+          <div className="absolute inset-0 border-8 border-double border-gray-800 pointer-events-none"></div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12 p-12">
+            <div className="flex-1 text-center md:text-left">
+              <motion.h1 
+                style={{
+                  fontSize: 'clamp(3rem, 5vw, 4.5rem)',
+                  fontWeight: 700,
+                  marginBottom: '1.5rem',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  color: 'transparent',
+                  backgroundImage: 'linear-gradient(to right, rgb(99, 102, 241), rgb(236, 72, 153), rgb(251, 191, 36))'
+                }}
+                animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+              >
+                Welcome to Hotel Management System
+              </motion.h1>
+              <p className="text-xl mb-8 text-gray-300 max-w-2xl">
+                Elevate your hotel operations with our state-of-the-art management solution.
+              </p>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button asChild size="lg" variant="default">
+                  <Link href={isAuthenticated ? "/rooms" : "/login"} className="inline-flex items-center px-6 py-3 text-lg font-semibold">
+                    {isAuthenticated ? "View Rooms" : "Get Started"}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </div>
+            <div className="flex-1">
+              <Image
+                src="/hotelmg.jpeg"
+                alt="Luxury hotel"
+                width={800}
+                height={600}
+                className="rounded-lg shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
+

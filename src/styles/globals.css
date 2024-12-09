@@ -1,0 +1,13 @@
+:root {
+    --feature-bg: #1a202c;
+    --icon-bg: #2d3748;
+    --text-secondary: #a0aec0;
+  }
+  
+  @layer base {
+    body {
+      min-height: 100vh;
+    }
+  }
+  
+  
